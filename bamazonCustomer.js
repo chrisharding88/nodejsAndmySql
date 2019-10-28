@@ -1,9 +1,14 @@
+
+// imports the installation then stores it in a variable
+require("dotenv").config();
+
 var mysql = require ("mysql");
 
 var inquirer = require("inquirer");
 
 var Table = require("cli-table2");
 
+// Connects the mySQL
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -11,10 +16,11 @@ var connection = mysql.createConnection({
 
     user: "root",
 
-    password: "CHmySQL1988#",
+    password: process.env.DB_PASS,
     database: "bamazon"
 
 });
+
 
 connection.connect();
 
@@ -52,7 +58,7 @@ var shopBamazon = function() {
  inquirer.prompt([
      {
      name:"selectID",
-     message: "From 1-10, Which product would you like to buy?",
+     message: "Which product would you like to buy?",
      type: "input"
      }
  ]).then(function(answer){
@@ -66,7 +72,7 @@ var shopBamazon = function() {
         // When the user types in the number ID that's not 1-10, it's going to return a zero.
         // And once it returns to zero, it displays a message saying that the ID doesn't exit 
      if (res.length === 0){
-         console.log("That ID doesn't exist. Please select the ID from 1 to 10");
+         console.log("That ID doesn't exist. Please select the ID that is listed");
          shopBamazon();
      }else {
          inquirer.prompt([
@@ -83,14 +89,22 @@ var shopBamazon = function() {
             var currentQuanity2 = res[0].stock_quanity;    
             var totalPrice = inputQuanity2 * productPrice2;
 
+            // If the quanities the user inputed is more than the current quanity
+            // It will display a message saying that they have the currrent a amount remaining
             if(inputQuanity2 > currentQuanity2){
                 console.log(`We're sorry. We only have ${currentQuanity2} items in stock`);
                 shopBamazon();
+
+            // If the current quanity is zero, then it's out of stock
+            } else if (currentQuanity2 === 0){
+                console.log("OUT OF STOCK");
+            
+            // Displays the product name, the items the user purchased by the product price, and the total amount
             } else {
                 console.log("");
                 console.log("------------------------------------");
                 console.log(`${productName2} purchased`);
-                console.log(`${inputQuanity2} @ ${productPrice2}`);
+                console.log(`${inputQuanity2} @ $ ${productPrice2}`);
                 console.log(`The total Price is: ${totalPrice}`);
                 console.log("------------------------------------");
 
@@ -108,6 +122,7 @@ var shopBamazon = function() {
                     connection.end();
 
                 })
+             
             }
          })
      }
