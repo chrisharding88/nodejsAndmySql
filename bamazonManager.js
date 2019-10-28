@@ -1,4 +1,6 @@
 // imports the installation then stores it in a variable
+require("dotenv").config();
+
 var mysql = require ("mysql");
 
 var inquirer = require("inquirer");
@@ -13,7 +15,7 @@ var connection = mysql.createConnection({
 
     user: "root",
 
-    password: "CHmySQL1988#",
+    password: process.env.DB_PASS,
     database: "bamazon"
 
 });
