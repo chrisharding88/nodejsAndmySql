@@ -70,22 +70,28 @@ var displayTable = function(){
     });
 
     }
+
+
+    // A function that allows a manager to choose an option
     function managerSelection(managerChoice){
 
         switch(managerChoice){
-
+            // Shows the table of every item: itemIDs, product names, prices, stock units
             case "View Products For Sale":
             displayTable()
             break;
 
+            // When the item has less than 5 quanities
             case "View Low Inventory":
             checkLowInventory()
             break;
 
+            // Adds more quanities
             case "Add to Inventory":
             addInventory()
             break;
 
+            // Adds new product to the table.
             case "Add New Product":
             addNewProduct()
             break;
@@ -99,7 +105,7 @@ var displayTable = function(){
 
     }
 
-    
+    // Checks to see if the inventory is less than 5 quanities
     var checkLowInventory = function (){
         inquirer.prompt([
             {
@@ -115,15 +121,23 @@ var displayTable = function(){
                 if (err) throw err;
                 var productName2 = res[0].product_name;
                 var currentQuanity2 = res[0].stock_quanity;
+                // If the doesn't pick the ID number listed below, it returns a zero.
+                // In other words, it displays a message that the ID doesn't exist
                 if (res.length === 0){
-                    console.log("That ID doesn't exist. Please select the ID from 1 to 10")
+                    console.log("That ID doesn't exist. Please select the ID below")
                     checkLowInventory();
+
                  // If the product is less than 5 units, then it displays the message that the stock is low
                 } else if (currentQuanity2 < 5){
                     console.log("WARNING: LOW INVENTORY! RESTOCK IMMEDIATELY");
                     checkLowInventory();
                     connection.end();
-                 } else {
+                // If the product has 0 units, then it displays the message that it is out of stock.
+                } else if(currentQuanity2 === 0){
+                    console.log("OUT OF STOCK! RESTOCK IMMEDIATELY!!!")
+                    checkLowInventory();
+                } else {
+                    // If the product has more than 5 units, then it displays the message that it is good standing
                     console.log(productName2 + " IS IN GOOD STANDING");
                     checkLowInventory();
                     connection.end();
@@ -138,7 +152,9 @@ var displayTable = function(){
 
     }
 
+    // Function that allows the user, or manager, to add the inventory
     var addInventory = function (){
+        
         inquirer.prompt([
             {
                 name:"selectInventoryID",
@@ -159,10 +175,11 @@ var displayTable = function(){
                 if (err) throw err;
                 
                 if (res.length === 0){
-                    console.log("That ID doesn't exist. Please select the ID from 1 to 10")
+                    console.log("That ID doesn't exist. Please select the ID")
                     addInventory();
-                 // If the product is less than 5 units, then it displays the message that the stock is low
                 } else {
+                    // Displays the message in the terminal that the product is selected to add more quanities
+                    // And it displays the new quanity number
                     console.log("-----------------------------------------");
                     console.log(`${productName2} is Selected`);
                     console.log(`${managerChoice3.inputQuanity} has been added to ${productName2} `);
@@ -185,6 +202,7 @@ var displayTable = function(){
 
     }
 
+// Function that allows the user to add a new product to the table
 var addNewProduct = function(){
     inquirer.prompt([
         {
@@ -216,6 +234,7 @@ var addNewProduct = function(){
          var updateQuery = `INSERT INTO products (product_name, department_name, price, stock_quanity)
                             VALUES("${newProductName}", "${newProductDepartment}", ${newProductPrice}, ${newStockQuanity})`
 
+        // Displays the updated table
         connection.query(updateQuery, function(err, res){
             if (err) throw err;
             console.log("Product Added!!!")
