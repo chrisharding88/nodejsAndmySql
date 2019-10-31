@@ -105,7 +105,7 @@ var shopBamazon = function() {
                 console.log("------------------------------------");
                 console.log(`${productName2} purchased`);
                 console.log(`${inputQuanity2} @ $ ${productPrice2}`);
-                console.log(`The total Price is: ${totalPrice}`);
+                console.log(`The total Price is: $ ${totalPrice}`);
                 console.log("------------------------------------");
 
                 // When the item is purchased, it decreases the number of quanities

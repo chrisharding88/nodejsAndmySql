@@ -33,7 +33,7 @@ var displayTable = function(){
                 head:["green"],
                 compact:true
             }
-        })
+        });
 
         // For loop is used to capture the list of items
         for(var i = 0; i < res.length; i++){
@@ -49,6 +49,7 @@ var displayTable = function(){
     })
 }
 
+    // Once it connects bamazonManager.js, it starts with the list of options the manager is going to pick
     connection.connect(function(err){
       if (err) throw err;
       inventory();
@@ -79,6 +80,7 @@ var displayTable = function(){
             // Shows the table of every item: itemIDs, product names, prices, stock units
             case "View Products For Sale":
             displayTable()
+            connection.end();
             break;
 
             // When the item has less than 5 quanities
@@ -107,47 +109,45 @@ var displayTable = function(){
 
     // Checks to see if the inventory is less than 5 quanities
     var checkLowInventory = function (){
-        inquirer.prompt([
-            {
-                name:"selectInventoryID",
-                message:"Which Product Do You Like To Check?",
-                type:"input"
-
-            }
-        ]).then(function(managerChoice2){
-            var managerPick = managerChoice2.selectInventoryID;
-            var selectQuery = "SELECT * FROM products WHERE item_id=?";
-            connection.query(selectQuery, managerPick, function(err, res){
+            var viewLowStockQuery = "SELECT * FROM products WHERE stock_quanity < 5";
+           
+            connection.query(viewLowStockQuery,  function(err, res){
                 if (err) throw err;
-                var productName2 = res[0].product_name;
-                var currentQuanity2 = res[0].stock_quanity;
+                var lowInventoryTable = new Table({
+                    head: ["Item Id", "Product Desciption","Department", "Cost", "Quanity"],
+                    colWidths:[12, 50, 45, 10, 10],
+                    colAligns:["center", "left", "left", "right", "center"],
+                    style:{
+                        head:["green"],
+                        compact:true
+                    }
+                });
+                for (var i = 0; i< res.length; i++){
+                    var itemID = res[i].item_id;
+                    var productName = res[i].product_name;
+                    var department = res[i].department_name
+                    var productPrice = res[i].price;
+                    var currentUnits = res[i].stock_quanity;
+                    lowInventoryTable.push([itemID, productName,department, productPrice, currentUnits]);
+                }
                 // If the doesn't pick the ID number listed below, it returns a zero.
                 // In other words, it displays a message that the ID doesn't exist
-                if (res.length === 0){
-                    console.log("That ID doesn't exist. Please select the ID below")
-                    checkLowInventory();
-
-                 // If the product is less than 5 units, then it displays the message that the stock is low
-                } else if (currentQuanity2 < 5){
-                    console.log("WARNING: LOW INVENTORY! RESTOCK IMMEDIATELY");
-                    checkLowInventory();
+                if (currentUnits < 5){
+                    console.log ("HERE ARE THE PRODUCTS THAT ARE LOW IN QUALITY:");
+                    console.log(lowInventoryTable.toString())
                     connection.end();
-                // If the product has 0 units, then it displays the message that it is out of stock.
-                } else if(currentQuanity2 === 0){
-                    console.log("OUT OF STOCK! RESTOCK IMMEDIATELY!!!")
-                    checkLowInventory();
+
                 } else {
-                    // If the product has more than 5 units, then it displays the message that it is good standing
-                    console.log(productName2 + " IS IN GOOD STANDING");
-                    checkLowInventory();
+                    console.log("You don't have any products that are low in inventory")
                     connection.end();
+                }
 
-                 }
+             
 
 
         })
 
-       })
+       
 
 
     }
@@ -158,7 +158,7 @@ var displayTable = function(){
         inquirer.prompt([
             {
                 name:"selectInventoryID",
-                message:"Which Product Do You Like To Check?",
+                message:"Which Product Do You Like To Add More Units?",
                 type:"input"
 
             },
@@ -168,30 +168,46 @@ var displayTable = function(){
                 type:"input"
             },
 
-        ]).then(function(managerChoice3){
-            var managerAddPick = managerChoice3.selectInventoryID;
-            var updateInventoryQuery = `UPDATE products SET stock_quanity = ${updateQuanity} WHERE item_id = ${itemSelect}`;
+        ]).then(function(managerAddUnits){
+            var managerAddPick = managerAddUnits.selectInventoryID;
+            var managerInputQuanity = managerAddUnits.inputQuanity;
+            var updateInventoryQuery = `SELECT * FROM products WHERE item_id = ${managerAddPick}`;
             connection.query(updateInventoryQuery, managerAddPick, function(err, res){
                 if (err) throw err;
-                
+
                 if (res.length === 0){
                     console.log("That ID doesn't exist. Please select the ID")
                     addInventory();
                 } else {
+                    var addQuanityTable = new Table({
+                        head: ["Item Id", "Product Desciption","Department", "Cost", "Quanity"],
+                        colWidths:[12, 50, 45, 10, 10],
+                        colAligns:["center", "left", "left", "right", "center"],
+                        style:{
+                            head:["green"],
+                            compact:true
+                        }
+                    });
+                    for (var i = 0; i< res.length; i++){
+                        var itemID = res[i].item_id;
+                        var productName = res[i].product_name;
+                        var department = res[i].department_name
+                        var productPrice = res[i].price;
+                        var currentUnits = res[i].stock_quanity;
+                        addQuanityTable.push([itemID, productName,department, productPrice, currentUnits]);
+                    }
+                      var updateQuanity = parseInt(currentUnits) + parseInt(managerInputQuanity);
+
                     // Displays the message in the terminal that the product is selected to add more quanities
                     // And it displays the new quanity number
                     console.log("-----------------------------------------");
-                    console.log(`${productName2} is Selected`);
-                    console.log(`${managerChoice3.inputQuanity} has been added to ${productName2} `);
-                    console.log(`The new quanity for ${productName2} is ${updateQuanity} units.`)
+                    console.log(`${productName} is Selected`);
+                    console.log(`${managerInputQuanity} has been added to ${productName} `);
+                    console.log(`The new quanity for ${productName} is ${updateQuanity} units.`)
                     console.log("-----------------------------------------");
-                    displayTable();
-                    var productName2 = res[0].product_name;
-                    var currentQuanity3 = res[0].stock_quanity;
-                    var updateQuanity = currentQuanity3 + managerChoice3.inputQuanity;
-                    var itemSelect = res[0].item_id;
-    
-
+                    console.log(addQuanityTable.toString());
+                    connection.end();
+            
                 }
 
 
