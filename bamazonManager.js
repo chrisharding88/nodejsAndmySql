@@ -197,7 +197,10 @@ var displayTable = function(){
                         addQuanityTable.push([itemID, productName,department, productPrice, currentUnits]);
                     }
                       var updateQuanity = parseInt(currentUnits) + parseInt(managerInputQuanity);
+                      var updatedInventoryQuery = `UPDATE products SET stock_quanity = ${updateQuanity} WHERE item_id = ${itemID} `;
 
+                    connection.query(updatedInventoryQuery, function(err, res){            
+                        if (err) throw err;
                     // Displays the message in the terminal that the product is selected to add more quanities
                     // And it displays the new quanity number
                     console.log("-----------------------------------------");
@@ -207,9 +210,8 @@ var displayTable = function(){
                     console.log("-----------------------------------------");
                     console.log(addQuanityTable.toString());
                     connection.end();
-            
+                });
                 }
-
 
            });
 
