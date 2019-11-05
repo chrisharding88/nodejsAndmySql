@@ -57,12 +57,13 @@ var displayTable = function(){
 
     // Lists a menu of options 
     var inventory = function(){
+        // Shows the list 
     inquirer.prompt([
         {
             name:"options",
             type: "list",
             message: "Choose The Selection Below",
-            choices: ["View Products For Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "EXIT"]
+            choices: ["View Products On Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "EXIT"]
         }
 
     ]).then(function(managerChoice){
@@ -78,12 +79,12 @@ var displayTable = function(){
 
         switch(managerChoice){
             // Shows the table of every item: itemIDs, product names, prices, stock units
-            case "View Products For Sale":
-            displayTable()
+            case "View Products On Sale":
+            displayTable();
             connection.end();
             break;
 
-            // When the item has less than 5 quanities
+            // Displays when the item has less than 5 quanities
             case "View Low Inventory":
             checkLowInventory()
             break;
@@ -135,11 +136,10 @@ var displayTable = function(){
                 if (currentUnits < 5){
                     console.log ("HERE ARE THE PRODUCTS THAT ARE LOW IN QUALITY:");
                     console.log(lowInventoryTable.toString())
-                    connection.end();
-
+                    inventory();
                 } else {
-                    console.log("You don't have any products that are low in inventory")
-                    connection.end();
+                    console.log("You don't have any products that are low in inventory");
+                    inventory();
                 }
 
              
@@ -245,6 +245,7 @@ var addNewProduct = function(){
         }    
         
     ]).then(function(managerInputs){
+        // Stores all the variables
          var newProductName = managerInputs.newProduct;
          var newProductPrice = managerInputs.newPrice
          var newProductDepartment = managerInputs.newDepartment;
@@ -252,13 +253,12 @@ var addNewProduct = function(){
          var updateQuery = `INSERT INTO products (product_name, department_name, price, stock_quanity)
                             VALUES("${newProductName}", "${newProductDepartment}", ${newProductPrice}, ${newStockQuanity})`
 
-        // Displays the updated table
+        // Conncects the query and displays the updated table
         connection.query(updateQuery, function(err, res){
             if (err) throw err;
             console.log("Product Added!!!")
             displayTable();
             connection.end();
-
         })
 
     })

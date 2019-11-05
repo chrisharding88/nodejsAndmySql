@@ -4,6 +4,11 @@
 
 Click This Link: [https://drive.google.com/file/d/19GvPK-KDP7pWHRIuMMYnG5Fuw5a6wsdz/view]
 
+<img src ="images/bamazon2.png" width="700" height="375">
+<img src ="images/bamazon3.png" width="700" height="375">
+<img src ="images/bamazon4.png" width="700" height="375">
+<img src ="images/bamazon5.png" width="700" height="375">
+<img src ="images/bamazon6.png" width="700" height="375">
 
 
 **************************************************************************

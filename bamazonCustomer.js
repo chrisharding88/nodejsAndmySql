@@ -30,9 +30,9 @@ var displayTable = function(){
 
         // Set up the table
         var tableBamazon = new Table({
-            head: ["Item Id", "Product Desciption", "Cost", "Quanity"],
-            colWidths:[12, 50, 10, 10],
-            colAligns:["center", "left", "right", "center"],
+            head: ["Item Id", "Product Desciption","Department", "Cost", "Quanity"],
+            colWidths:[12, 50, 45, 10, 10],
+            colAligns:["center", "left","left", "right", "center"],
             style:{
                 head:["green"],
                 compact:true
@@ -43,9 +43,10 @@ var displayTable = function(){
         for(var i = 0; i < res.length; i++){
             var itemID = res[i].item_id;
             var productName = res[i].product_name;
+            var department = res[i].department_name;
             var productPrice = res[i].price;
             var currentQuanity = res[i].stock_quanity;
-            tableBamazon.push([itemID, productName, productPrice, currentQuanity]);
+            tableBamazon.push([itemID, productName, department, productPrice, currentQuanity]);
         }
         // Displays the table
         console.log(tableBamazon.toString());
@@ -105,7 +106,7 @@ var shopBamazon = function() {
                 console.log("------------------------------------");
                 console.log(`${productName2} purchased`);
                 console.log(`${inputQuanity2} @ $ ${productPrice2}`);
-                console.log(`The total Price is: $ ${totalPrice}`);
+                console.log(`The total Price is: $ ${totalPrice.toFixed(2)}`);
                 console.log("------------------------------------");
 
                 // When the item is purchased, it decreases the number of quanities
