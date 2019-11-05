@@ -76,6 +76,7 @@ var shopBamazon = function() {
          console.log("That ID doesn't exist. Please select the ID that is listed");
          shopBamazon();
      }else {
+        //  Allows user to put in the input
          inquirer.prompt([
              {
              name: "stockQuanity",
